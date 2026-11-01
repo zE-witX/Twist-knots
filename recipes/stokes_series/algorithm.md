@@ -18,3 +18,11 @@ Conventions: qt = e^{-2 pi i/tau}, xt = e^{u/tau}; cones I, II (|qt| < 1), III, 
    gc -> xt^{-1}, cg -> xt (multipliers), diagonal unchanged.
 7. Assertions: every coefficient is in Z[xt^{+-1}]; S -> 1 as qt -> 0; Euler (plethystic) exponents of S_gg
    are integral.
+
+## 7_2 (upper sweep)
+1. q~-blocks G^eps_j(xt; qt; n) of the two-dimensional factorisation (series in s = qt^{1/4}), for the
+   descendant basis B = {(0,0),(0,1),(1,0),(1,1),(2,1)} and the six columns (j, eps).
+2. Conjugation factors r_j (theta quotients) and T = Ytilde_B(1/xt) R E (Ytilde_B E)^{-1} (E: five columns).
+3. S^+ = diag(-1,-1,-1,-1,-xt^2) Pi N_I(1/xt) T N_I(xt)^{-1}, Pi = (s1 s2)(s3 s4).
+4. Assertions: only integer powers of qt occur; coefficients are integral Laurent polynomials; xt symbolic
+   (the columns j = 0, 2 coincide at xt = 1, so xt = 1 is reached by specialisation).

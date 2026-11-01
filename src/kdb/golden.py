@@ -483,7 +483,35 @@ def c_euler(case, result=None):
     return errs
 
 
+def c_splus_at1(case, result=None):
+    res = _st(case, result)
+    errs = []
+    for k, M in enumerate(case["expect"]):
+        for a in range(5):
+            for b in range(5):
+                g = res["matrix"][a][b][k]
+                v = sym(g).subs(__import__("sympy").symbols("xt"), 1)
+                if v != M[a][b]:
+                    errs.append(f"qt^{k} [{a + 1}][{b + 1}]: {v} != {M[a][b]}")
+    if res.get("integral_laurent") is False:
+        errs.append("non-integral Laurent coefficients")
+    return errs
+
+
+def c_splus_generic(case, result=None):
+    res = _st(case, result)
+    errs = []
+    for k, M in enumerate(case["expect"]):
+        for a in range(5):
+            for b in range(5):
+                if not _laurent_eq(res["matrix"][a][b][k], M[a][b]):
+                    errs.append(f"qt^{k} [{a + 1}][{b + 1}]: {res['matrix'][a][b][k]} != {M[a][b]}")
+    return errs
+
+
 CHECKS = {
+    "splus_at1": c_splus_at1,
+    "splus_generic": c_splus_generic,
     "rational_functions": c_rational_functions,
     "rationals": c_rationals,
     "P_eps": c_P_eps,

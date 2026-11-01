@@ -268,8 +268,10 @@ def run_stokes_series(params: Dict) -> Dict:
     from .blocks import Blocks, Ring
     from .stokes.cones import stokes_matrix, standard_form, p_frame_factor, default_order
     knot = load_knot(params.get("knot"), params.get("twist"))
+    if knot.p == 3:
+        return _stokes_72(knot, params)
     if knot.p != -1:
-        raise NotImplementedError(f"stokes_series is implemented for 4_1 only (requested {knot.id}); see REPORT")
+        raise NotImplementedError(f"stokes_series is implemented for 4_1 and 7_2 only (requested {knot.id}); see REPORT")
     frm, to = params.get("from_cone", "I"), params.get("to_cone", "II")
     entry = params.get("entry", "all")
     order = int(params.get("order", 6))
@@ -320,4 +322,40 @@ def run_stokes_series(params: Dict) -> Dict:
         "matrix": matrix,
         "integral_laurent": bool(integral) if x is None else None,
         "version": __version__,
+    }
+
+
+def _stokes_72(knot, params: Dict) -> Dict:
+    """Upper-sweep S^+ of 7_2 reconstructed from the 2d holomorphic blocks (kdb.stokes.knot72)."""
+    from .stokes.knot72 import splus, qt_coefficients
+    frm, to = params.get("from_cone", "I"), params.get("to_cone", "II")
+    if (frm, to) != ("I", "II"):
+        raise NotImplementedError("7_2: only the upper sweep I -> II (S^+) is available")
+    order = int(params.get("order", 2))
+    x = parse_x(params.get("x", "symbol"))
+    S, R = splus(order, xt=x)
+    labels = ["s1", "s2", "s3", "s4", "s5"]
+    entries = {}
+    matrix = []
+    for a in range(5):
+        row = []
+        for b in range(5):
+            cs = qt_coefficients(S[a][b], order)
+            strs = [c.to_str("xt") if isinstance(c, RatFun) else str(c) for c in cs]
+            entries[labels[a] + labels[b]] = {"coefficients": strs, "variable": "qt", "order": order}
+            row.append(strs)
+        matrix.append(row)
+    integral = all(c.is_integral_laurent() for a in range(5) for b in range(5)
+                   for c in qt_coefficients(S[a][b], order) if isinstance(c, RatFun))
+    return {
+        "recipe": "stokes_series", "knot": knot.id, "group": {"family": "SL", "N": 2}, "side": "cs",
+        "params": {"from_cone": frm, "to_cone": to, "order": order, "x": "symbol" if x is None else str(x)},
+        "conventions": {
+            "definition": "S^+ with s_II(hatPhi) = S^+ s_I(hatPhi); S^+ = diag(-1,-1,-1,-1,-xt^2) Pi N_I(1/xt) T N_I(xt)^-1 "
+                          "(reconstruction from the 2d blocks of the 6_1/7_2 notes)",
+            "sectors": "s1 geometric, s2 conjugate, s3/s4 second complex pair, s5 real (trivial sector decouples)",
+            "variables": "qt = exp(-2 pi i/tau), xt = exp(u/tau)",
+        },
+        "entries": entries, "matrix": matrix, "integral_laurent": integral if x is None else None,
+        "status": "conjectural (radial formula); reconstructed (ours)", "version": __version__,
     }

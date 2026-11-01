@@ -10,7 +10,7 @@ Two recipes are implemented:
 | recipe | output |
 |---|---|
 | `perturbative_series` | the series phi_sigma(x, h), h = 2 pi i tau, of the trivial sector and of the non-trivial sectors, with the exponential kept separately, in the standard frame or the P-frame |
-| `stokes_series` | the Stokes automorphisms between the cones of the radial formula (4_1), as exact q~-series whose coefficients are Laurent polynomials in x~ |
+| `stokes_series` | the Stokes automorphisms between the cones of the radial formula, as exact q~-series whose coefficients are Laurent polynomials in x~ (4_1: all four cones; 7_2: the upper sweep) |
 
 Python is the reference engine. SageMath and Wolfram Language versions of both recipes follow the same
 step list (`recipes/<name>/algorithm.md`) and run against the same golden tests.

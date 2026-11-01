@@ -26,4 +26,4 @@ state_integral:
 normalisation:
   series_reference: "NZ normalisation of the 6_1/7_2 note (A_1 closed form in z, -3z^5+z^4+5z^3-3z-1 = 0)"
   twist_engine_offset: {value: "-1/6", meaning: "phi(I_K_p engine) = exp(c*h) * phi(NZ)", status: ours}
-blocks: {available: partial, note: "explicit q-blocks F, q~-blocks G, C_j, N_I and conjugation law in the 6_1/7_2 note sec. 7.2, 9; S+ reconstruction not implemented in this release"}
+blocks: {available: true, note: "q~-blocks G, conjugation factors r_j and N_I of the 6_1/7_2 note (72factor), (72NI); S+ reconstructed in kdb.stokes.knot72 (status: ours; reproduces Thm 72Splus)"}
