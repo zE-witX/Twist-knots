@@ -10,7 +10,8 @@ from .registry import validate
 
 def build(knots: List[str] | None = None):
     from .recipes import run_perturbative_series, run_stokes_series
-    knots = knots or builtin_knots()
+    from .data import TWIST_NAMES
+    knots = knots or sorted(set(builtin_knots()) | {TWIST_NAMES[p] for p in range(-4, 5) if p not in (0, 1)})
     written = []
     for kid in knots:
         k = load_knot(kid)
@@ -34,6 +35,10 @@ def build(knots: List[str] | None = None):
             st = run_stokes_series({"knot": k.id, "from_cone": "I", "to_cone": "II", "order": 6, "x": "symbol"})
             written.append(write_item(k, "stokes", {"status": "conjectural", "source": "GGMW Conj. 14-15 (corrected P_III, P_IV)",
                                                     "result": st}))
-    for p in written:
-        pass
+    for path in written:
+        import json
+        payload = json.loads(path.read_text())
+        errs = validate(path.stem if path.stem in ("classical", "state_integral", "series", "stokes") else "series", payload)
+        if errs:
+            raise ValueError(f"{path}: {errs}")
     return written

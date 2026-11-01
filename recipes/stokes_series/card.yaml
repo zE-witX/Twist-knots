@@ -1,0 +1,22 @@
+name: stokes_series
+version: 1
+kind: stokes
+axes: {group: {family: SL, N: 2}, side: cs}
+summary: >
+  Stokes automorphism S_{R->R'} between the cones I, II, III, IV of the radial formula (decorated holomorphic
+  blocks), as exact qt-series whose coefficients are Laurent polynomials in xt; entries 00, 0g, 0c, gg, gc, cg, cc
+  of the Gauss factorisation, Delta-normalised or P-frame.
+params:
+  knot: {type: string, values: ["4_1"]}
+  from_cone: {values: [I, II, III, IV]}
+  to_cone: {values: [I, II, III, IV], note: "adjacent counter-clockwise: I->II, II->III, III->IV, IV->I"}
+  entry: {values: [all, "00", 0g, 0c, gg, gc, cg, cc], default: all}
+  order: {type: integer, default: 6}
+  x: {values: [symbol, rational number], default: symbol, note: "value of xt"}
+  frame: {values: [standard, P], default: standard}
+  variant: {values: [corrected, ggmw118], default: corrected, note: "entry of P_III, P_IV, see algorithm.md"}
+engines:
+  python: {status: reference, file: run.py}
+  sage: {status: tested, file: run.sage, scope: "I -> II"}
+  wolfram: {status: tested, file: run.wl, scope: "I -> II"}
+status: conjectural (radial formula), exact given the conjecture

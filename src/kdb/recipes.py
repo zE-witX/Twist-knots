@@ -30,6 +30,13 @@ def acb_str(v: acb, digits: int) -> str:
     """Mathematica/sympy-parseable complex number with `digits` significant digits (radius dropped)."""
     v = v.mid()
     re, im = v.real, v.imag
+    # components below the printed precision are numerical zeros
+    scale = max(abs(v).mid(), arb(1)) if abs(v).mid() > 0 else arb(1)
+    cut = scale * arb(10) ** (-(digits + 5))
+    if abs(re) < cut:
+        re = arb(0)
+    if abs(im) < cut:
+        im = arb(0)
 
     def s(a: arb):
         if a == 0:
@@ -153,8 +160,8 @@ def _phi0(p: int, order: int, x, method: str, frame: str) -> Dict:
         Pm2, e = minimal_denominator(p, Pm, m)
         pe = sp.Integer(0) + sum(sp.Rational(int(c.p), int(c.q)) * eps ** i for i, c in enumerate(Pm2.coeffs()))
         Rm_eps = pe / (1 - p * eps) ** e
-        epsforms.append(f"({sp.sstr(sp.expand(pe))})/(1 - ({p})*eps)^{e}")
-        zforms.append(sp.sstr(sp.expand(pe.subs(eps, -z ** 2))) + f" / (1 + ({p})*z^2)^{e}")
+        epsforms.append(f"({sp.sstr(sp.expand(pe))})/(1 - ({p})*eps)^{e}".replace("**", "^"))
+        zforms.append((sp.sstr(sp.expand(pe.subs(eps, -z ** 2))) + f" / (1 + ({p})*z^2)^{e}").replace("**", "^"))
         dens.append(e)
         if x is None:
             Rx = sp.factor(sp.together(Rm_eps.subs(eps, 2 - xs - 1 / xs)))

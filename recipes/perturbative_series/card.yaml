@@ -1,0 +1,26 @@
+name: perturbative_series
+version: 1
+kind: series
+axes: {group: {family: SL, N: 2}, side: cs}
+summary: >
+  Perturbative series phi_sigma(x, h), h = 2 pi i tau, of a hyperbolic twist knot K_p: the trivial sector 0
+  (all p) and the non-trivial sectors (4_1: g, c; other K_p: the Galois orbit s1, s2, ...), exponential kept
+  separately, standard frame or P-frame.
+params:
+  knot: {type: string, example: "4_1", note: "or --twist p"}
+  twist: {type: integer, example: 3}
+  sector: {type: string, values: ["0", g, c, s1, s2, "...", all], default: "0"}
+  order: {type: integer, default: 8}
+  x: {type: string, values: [symbol, rational number], default: symbol}
+  frame: {values: [standard, P], default: standard}
+  digits: {type: integer, default: 60}
+engines:
+  python: {status: reference, file: run.py}
+  sage: {status: tested, file: run.sage, scope: "sector 0 all K_p; sectors g, c of 4_1"}
+  wolfram: {status: tested, file: run.wl, scope: "sector 0 all K_p; sectors g, c of 4_1"}
+methods:
+  sector_0: "Masbaum/Habiro cyclotomic expansion + Melvin-Morton-Rozansky resummation (exact); cross-checks: notebook Dq/Lagrange route, residue routes (Marino 3.4, Phi0x), q-difference equation"
+  sectors_g_c_41: "formal Gaussian expansion of the new state integral (exact generic x through h^6; 240-digit numerics)"
+  sectors_Kp: "formal 2d Gaussian expansion of Marino's double contour integral I_{K_p}(z, w) (numerical, rational x)"
+outputs: [result.json, result.csv, result.tex, result.md, manifest.json]
+status: {4_1: known, 5_2: "known (series), ours (engine)", 6_1: ours, 7_2: ours, other K_p: ours}
