@@ -1,0 +1,28 @@
+# --- privacy: research inputs live OUTSIDE this repo (in ../inputs, ../docs) and must never be added ---
+inputs/
+private/
+raw/
+docs/series/
+REPORT.md
+CLAUDE.md
+*.nb
+*.pdf
+*.dat
+*.tex
+!src/**/templates/*.tex
+*.png
+!docs/img/*.png
+# --- generated data and result bundles: git-ignored by default (CLAUDE.md rule 2) until publication is decided ---
+data/
+out/
+# --- python / tooling ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+*.sage.py

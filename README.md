@@ -1,1 +1,0 @@
-# Resurgence-twist-knots
