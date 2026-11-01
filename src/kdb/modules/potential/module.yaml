@@ -1,7 +1,7 @@
 kind: potential
 version: 1
 status: implemented
-description: Classical potential S(u, v), critical equations, Hessians, actions V^s
-  and P-frame actions a_s.
+description: Classical potential S(u, v), critical equations, Hessians and actions
+  V^s.
 recipes:
 - perturbative_series

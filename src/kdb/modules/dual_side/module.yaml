@@ -1,6 +1,6 @@
 kind: dual_side
 version: 1
-status: stub
+status: 'partial (3D index: module index)'
 description: 'Dual-side data of the same knot: modular-dual (xt, qt) side and/or 3d-3d
   dual T[M] (indices, vortex/holomorphic-block data, BPS counts).'
 recipes: []

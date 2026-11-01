@@ -567,7 +567,27 @@ def c_finv(case, result=None):
     return errs
 
 
+def c_index_x1(case, result=None):
+    from .recipes import run_index3d
+    errs = []
+    for k, exp in case["expect"].items():
+        got = [int(v) for v in run_index3d({"knot": k, "order": int(case["params"]["order"]), "flux": [0]})["fluxes"]["0"]["at_x_1"]]
+        if got[: len(exp)] != exp:
+            errs.append(f"{k}: {got} != {exp}")
+    return errs
+
+
+def c_index_x_graded(case, result=None):
+    import sympy as sp
+    from .recipes import run_index3d
+    P = case["params"]
+    got = run_index3d({"knot": P["knot"], "order": int(P["order"]), "flux": [0]})["fluxes"]["0"]["Ind_rot"]
+    return [f"q^{n}: {g} != {e}" for n, (g, e) in enumerate(zip(got, case["expect"])) if sp.simplify(sym(g) - sym(e)) != 0]
+
+
 CHECKS = {
+    "index_x1": c_index_x1,
+    "index_x_graded": c_index_x_graded,
     "nz_a1_numberfield": c_nz_a1_numberfield,
     "inverted_habiro": c_inverted_habiro,
     "finv": c_finv,

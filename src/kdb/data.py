@@ -145,7 +145,7 @@ def load_knot(knot: str = None, twist: int = None) -> Knot:
 
 
 def builtin_knots() -> List[str]:
-    return sorted(f.stem for f in (PKG / "knots").glob("*.yaml"))
+    return sorted(f.stem for f in (PKG / "knots").glob("*.yaml") if f.stem != "nz_data")
 
 
 def write_item(knot: Knot, kind: str, payload: Dict, group=None, side="cs") -> Path:

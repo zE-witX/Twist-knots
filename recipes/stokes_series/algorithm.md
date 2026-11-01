@@ -23,3 +23,12 @@ Conventions: qt = e^{-2 pi i/tau}, xt = e^{u/tau}; cones I, II (|qt| < 1), III, 
 3. S^+ = diag(-1,-1,-1,-1,-xt^2) Pi N_I(1/xt) T N_I(xt)^{-1}, Pi = (s1 s2)(s3 s4).
 4. Assertions: only integer powers of qt occur; coefficients are integral Laurent polynomials; xt symbolic
    (the columns j = 0, 2 coincide at xt = 1, so xt = 1 is reached by specialisation).
+
+## 5_2
+1. Blocks A_m, B_m, C_m (GGM (241)-(242)) at nome q and, for |q| > 1, at nome q^{-1} with
+   theta(x; q^{-1}) = 1/theta(x; q) and H(.; q^{-1}) = H_- (GGM sec. 4); check: orthogonality GGM (256).
+2. W_{-1}(x; q) (GGM (244)) and M_R = W_{-1}(x^{+-1}; q^{+-1})^T R_R (GGM (304a-d)).
+3. Reduced S_{I->II} = M_II^{-1} M_I (only |q| < 1 blocks); check: S_{I->II} S_{IV->I} = GGM (305a) (which uses |q| > 1
+   blocks), S^+_{11} = GGM (316).  Lower sweep: S_{III->IV} = M_IV^{-1} M_III, and GGM (305b).
+4. Trivial row: Campbell's D_m (GGMW (219)), M_R = (qt D_0, qt^2 D_1, qt^3 D_2) M^{(s0)}_R (GGMW (235)-(236)) and
+   S_{0,j} = M_{I,j} - sum_k M_{II,k} S_{k,j} (GGMW (237)); check: GGMW (238).

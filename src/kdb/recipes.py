@@ -130,6 +130,10 @@ def run_perturbative_series(params: Dict) -> Dict:
     }
     if sector in ("0", "trivial", "sigma0"):
         res["sectors"]["0"] = _phi0(p, order, x, method, frame)
+    elif method == "nz":
+        if x is None:
+            raise ValueError("--method nz needs a rational x")
+        res["sectors"].update(_phi_nz(knot, order, x, digits, sector))
     elif p == -1 and sector in SECTOR_ALIASES_41 and method in ("auto", "gauss41"):
         res["sectors"][sector] = _phi_gc_41(SECTOR_ALIASES_41[sector], order, x, digits, frame)
     elif sector in ("all", "nonabelian") or sector.startswith("s") or sector in SECTOR_ALIASES_41:
@@ -255,6 +259,30 @@ def _phi_twist(knot, p: int, order: int, x, digits: int, which: str) -> Dict:
                               "a sector-independent factor exp(c h) recorded in the knot file (twist_engine_offset)"),
         }
     ctx.prec = old
+    return out
+
+
+def _phi_nz(knot, order: int, x, digits: int, which: str) -> Dict:
+    """Non-trivial sectors from the NZ (Andersen-Kashaev) integral of the knot."""
+    from .series.integrands import nz_series
+    from .series.saddle import log_series
+    rows = nz_series(knot.id, x, order, digits)
+    rows = [r for r in rows if abs(r[1].mid()) > 1e-20] + [r for r in rows if abs(r[1].mid()) <= 1e-20]
+    out = {}
+    for i, (Z, vol, r) in enumerate(rows):
+        sid = f"s{i + 1}"
+        if which not in ("all", "nonabelian") and which != sid:
+            continue
+        out[sid] = {
+            "name": "nonabelian", "method": "formal Gaussian expansion of the NZ integral (kdb.series.integrands)",
+            "status": "ours (normalised a_0 = 1)",
+            "critical_point": [acb_str(z, 30) for z in Z],
+            "volume_bloch_wigner": acb_str(acb(vol), 20),
+            "coefficients": [acb_str(c, digits) for c in r.a],
+            "log_coefficients": [acb_str(c, digits) for c in log_series(r.a)],
+            "normalisation": "6_1, 7_2: the NZ normalisation of the notes (no offset); 4_1: notebook series times e^{h/24}; "
+                             "5_2: GGM series times e^{h/8}",
+        }
     return out
 
 

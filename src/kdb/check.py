@@ -8,7 +8,7 @@ from typing import Dict, List
 
 from .golden import CHECKS, check_case, load_golden, same_rational, sym
 
-RECIPES = ("perturbative_series", "stokes_series")
+RECIPES = ("perturbative_series", "stokes_series", "index3d")
 # cases skipped in --quick mode (minutes of CPU)
 SLOW_CASES = {"private_phi_gc_series", "private_phi1x1d280", "private_PDzlist"}
 

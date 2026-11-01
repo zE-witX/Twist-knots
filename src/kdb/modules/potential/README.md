@@ -1,6 +1,6 @@
 # module `potential` (implemented)
 
-Classical potential S(u, v), critical equations, Hessians, actions V^s and P-frame actions a_s.
+Classical potential S(u, v), critical equations, Hessians, actions V^s.
 
 
 

@@ -1,0 +1,19 @@
+name: index3d
+version: 1
+kind: index
+axes: {group: {family: SL, N: 2}, side: dual}
+summary: >
+  The 3D index of Dimofte-Gaiotto-Gukov, I(m, e)(q), and the rotated index Ind^rot(m, x; q) = sum_e I(m, e) x^e,
+  from the Neumann-Zagier data of a census triangulation of the knot complement (any magnetic flux m for which the
+  tetrahedron charges are integral).
+params:
+  knot: {type: string, example: "7_2"}
+  order: {type: integer, default: 6}
+  flux: {type: list of integers, default: [0]}
+engines:
+  python: {status: reference, file: run.py}
+  sage: {status: not ported}
+  wolfram: {status: not ported}
+checks:
+  - "flux 0: Ind^rot(0, x; q) = S^+_{gg}(x; q) exactly for 4_1, 5_2, 7_2; 6_1 at x = 1 (conjecture of GGM / the notes)"
+  - "flux +-2 (5_2): agrees with the bilinear block formula, up to the monomial x^{-3m} of GGM (314)"
