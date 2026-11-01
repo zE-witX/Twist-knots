@@ -1,0 +1,7 @@
+kind: stokes_curves
+version: 1
+status: stub
+description: 'Stokes curves Re(e^{-i theta} DeltaV) = 0 on the u-plane (CLAUDE.md
+  3.6). Inputs: V^s(u), branch points. Outputs: polylines (CSV), figure, pgfplots
+  stub.'
+recipes: []

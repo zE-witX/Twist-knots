@@ -1,0 +1,29 @@
+schema: knot/1
+id: "4_1"
+twist_p: -1
+aliases: {rolfsen: "4_1", masbaum: "K_-1", schubert: [5, 3], census: null}
+amphichiral: true
+group: {family: SL, N: 2}
+classical:
+  alexander_t: {value: "t^2 - 3*t + 1", source: "Note A, summary table", status: known}
+  alexander_z: {value: "1 - z^2", source: "Delta_{K_p} = 1 + p z^2 (CLAUDE.md 3.0)", status: known}
+  riley_x1: {value: "u^2 + u + 1", disc: -3, source: "Note A, Prop. twistriley table", status: known}
+  volume: {value: "2.0298832128", digits: 11, source: "Note A summary table; GGMW (89) at x=1", status: known}
+  torsion_poly: {value: "d^2 + 3", source: "Note A, (torspolys)", status: known}
+  trace_field: {value: "Q(sqrt(-3))", source: "Note A", status: known}
+sectors:
+  - {id: "0", name: trivial, V: "0"}
+  - {id: g, name: geometric, sigma: 1, vol_sign: +1, root: RootPlus}
+  - {id: c, name: conjugate, sigma: 2, vol_sign: -1, root: RootMinus}
+state_integral:
+  kind: one_dimensional
+  description: "new state integral Z_{lambda,mu}(u,tau), GGMW (139),(148); Pengxu Phi0 note (2.1)"
+  potential: "S(u,v) = u^2 + Li2(-e^v) + Li2(-e^(u+v)) + v^2/2 + 2*u*v"
+  saddle_curve: "x*y^2 + (x^2 - x - 1)*y + 1"
+  action: "V^s = S(u, v_s) + pi^2/6 + eta_s*pi*I*u, (eta_g, eta_c) = (1, -1)"
+  status: known
+normalisation:
+  series_reference: "notebook Phi_gc_hbar_series (includes e^(-h/24)) = GGMW (85)-(88)"
+  twist_engine_offset: {value: "-1/12", meaning: "phi(I_K_p engine) = exp(c*h) * phi(reference)", status: ours}
+blocks: {available: true, source: "GGMW (94)-(112), decorated with squared theta"}
+radial_formula: {available: true, source: "GGMW Conj. 14-15 (118a-d) with P_III, P_IV corrected"}

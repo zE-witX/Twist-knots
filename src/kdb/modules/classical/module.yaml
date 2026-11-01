@@ -1,0 +1,7 @@
+kind: classical
+version: 1
+status: implemented
+description: 'Classical invariants: Alexander and Riley polynomials, volumes, torsion
+  polynomials, fields, sector list.'
+recipes:
+- perturbative_series

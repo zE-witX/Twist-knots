@@ -1,0 +1,26 @@
+schema: knot/1
+id: "5_2"
+twist_p: 2
+aliases: {rolfsen: "5_2", masbaum: "K_2", schubert: [7, 3], census: null}
+amphichiral: false
+group: {family: SL, N: 2}
+classical:
+  alexander_t: {value: "2*t^2 - 3*t + 2", source: "Note A summary table", status: known}
+  alexander_z: {value: "1 + 2*z^2", source: "CLAUDE.md 3.0", status: known}
+  riley_x1: {value: "u^3 - u^2 + 2*u - 1", disc: -23, source: "Note A", status: known}
+  volume: {value: "2.8281220883", digits: 11, source: "Note A summary table", status: known}
+  torsion_poly: {value: "d^3 + 3*d^2 + 23", source: "Note A, (torspolys)", status: known}
+  trace_field: {value: "cubic field of discriminant -23; xi with (1-xi)^3 = xi^2", source: "GGMW 4.1, (184)", status: known}
+sectors:
+  - {id: "0", name: trivial, V: "0"}
+  - {id: s1, name: geometric, sigma: 1, vol_sign: +1, V_ref: "-3.02413 - 2.82812*I", V_ref_source: "Gu notes (eq:V-52) (convention of Gu); GGMW (189) opposite sign"}
+  - {id: s2, name: conjugate, sigma: 2, vol_sign: -1, V_ref: "-3.02413 + 2.82812*I", V_ref_source: "Gu notes"}
+  - {id: s3, name: real, sigma: 3, vol_sign: 0, V_ref: "1.11345", V_ref_source: "Gu notes"}
+state_integral:
+  kind: two_dimensional_habiro
+  description: "Marino 5.4 double contour integral I_{K_p}(z,w) at p = 2 (inverted Habiro series); GGMW 4.8"
+  status: conjectural
+normalisation:
+  series_reference: "GGM convention phi_GGM (Gu notes (eq:phis-52)); Gu convention = exp(-25h/24) phi_GGM"
+  twist_engine_offset: {value: "-3/8", meaning: "phi(I_K_p engine) = exp(c*h) * phi_GGM", status: ours}
+blocks: {available: false, missing: "x-deformed 4x4 radial formula / cone matrices of 5_2 are in Gu notes sec. 4.5-4.6 and GGMW 4.5-4.6 only for the reduced 3x3 block; not implemented"}

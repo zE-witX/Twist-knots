@@ -1,0 +1,5 @@
+kind: exponential_network
+version: 1
+status: stub
+description: A-polynomial / spectral curve, exponential networks, BPS counts.
+recipes: []

@@ -1,0 +1,6 @@
+kind: qdifference_module
+version: 1
+status: stub
+description: 'Linear q-difference modules: shift operators, frames, classical symbol
+  (Pengxu''s notes). The formal solver series/phi0.qdiff_formal is the seed.'
+recipes: []

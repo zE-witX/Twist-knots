@@ -98,25 +98,40 @@ def stokes_middle_form_b(B: Blocks):
     return mat_mul(mat_mul(mat_mul(mat_mul(left, inv_generic(J)), mid), J), right)
 
 
-def standard_form(S) -> Dict[str, object]:
-    """S = L D U with L = [[1,S0g,0],[0,1,0],[0,Scg,1]], D = diag(1,Sgg,Scc), U = [[1,0,S0c],[0,1,Sgc],[0,0,1]].
+def standard_form(S, order: str = "LDU") -> Dict[str, object]:
+    """Gauss factorisation of a global Stokes matrix into its elementary pieces.
 
-    (Pengxu (3.5).)  Returns the six entries plus S00.
+    order 'LDU' (upper sweep, I -> II; Pengxu (3.5)):
+        S = [[1,S0g,0],[0,1,0],[0,Scg,1]] diag(1,Sgg,Scc) [[1,0,S0c],[0,1,Sgc],[0,0,1]]
+    order 'UDL' (lower sweep, III -> IV; rays ordered the other way round):
+        S = [[1,0,S0c],[0,1,Sgc],[0,0,1]] diag(1,Sgg,Scc) [[1,S0g,0],[0,1,0],[0,Scg,1]]
+    With 'UDL', S_{III->IV} reproduces GGMW (130).  Returns the six entries plus S00.
     """
-    S11 = S[1][1]
-    i11 = S11.inverse() if isinstance(S11, TSeries) else 1 / S11
-    Sgc = S[1][2] * i11
-    S0g = S[0][1] * i11
-    Scg = S[2][1] * i11
-    return {
-        "00": S[0][0],
-        "gg": S11,
-        "gc": Sgc,
-        "0g": S0g,
-        "cg": Scg,
-        "0c": S[0][2] - S0g * S[1][2],
-        "cc": S[2][2] - Scg * S[1][2],
-    }
+
+    def inv(a):
+        return a.inverse() if isinstance(a, TSeries) else 1 / a
+
+    if order == "LDU":
+        S11 = S[1][1]
+        i11 = inv(S11)
+        Sgc = S[1][2] * i11
+        S0g = S[0][1] * i11
+        Scg = S[2][1] * i11
+        return {"00": S[0][0], "gg": S11, "gc": Sgc, "0g": S0g, "cg": Scg,
+                "0c": S[0][2] - S0g * S[1][2], "cc": S[2][2] - Scg * S[1][2]}
+    if order == "UDL":
+        S22 = S[2][2]
+        i22 = inv(S22)
+        S0c = S[0][2] * i22
+        Sgc = S[1][2] * i22
+        Scg = S[2][1] * i22
+        return {"00": S[0][0], "cc": S22, "0c": S0c, "gc": Sgc, "cg": Scg,
+                "0g": S[0][1] - S0c * S[2][1], "gg": S[1][1] - Sgc * S[2][1]}
+    raise ValueError(order)
+
+
+def default_order(frm: str, to: str) -> str:
+    return "UDL" if (frm, to) == ("III", "IV") else "LDU"
 
 
 def middle_formulas(B: Blocks):

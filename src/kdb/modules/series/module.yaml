@@ -1,0 +1,7 @@
+kind: series
+version: 1
+status: implemented
+description: 'Perturbative series phi_sigma(x, h) per sector: exact (rational functions
+  / number-field elements) or numeric (strings with digits).'
+recipes:
+- perturbative_series

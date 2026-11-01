@@ -1,0 +1,29 @@
+schema: knot/1
+id: "7_2"
+twist_p: 3
+aliases: {rolfsen: "7_2", masbaum: "K_3", schubert: [11, 5], census: "m053", riley_chirality: "b(11,6)"}
+amphichiral: false
+group: {family: SL, N: 2}
+classical:
+  alexander_t: {value: "3*t^2 - 5*t + 3", source: "Note A summary table", status: known}
+  alexander_z: {value: "1 + 3*z^2", source: "CLAUDE.md 3.0", status: known}
+  riley_x1: {value: "u^5 - u^4 + 4*u^3 - 3*u^2 + 3*u - 1", disc: 4409, source: "Note A; 6_1/7_2 note", status: known}
+  volume: {value: "3.3317442316", digits: 11, source: "Note A summary table", status: known}
+  torsion_poly: {value: "d^5 + 6*d^4 + 20*d^3 + 385*d^2 + 4409", source: "Note A (torspolys); note: d^5 - 6d^4 + 20d^3 - 385d^2 - 4409", status: known}
+  shape_field: {value: "Q(w), w^5 - w^4 + w^2 + w - 1 = 0, disc 4409, (r1,r2) = (1,2)", source: "6_1/7_2 note", status: known}
+sectors:
+  - {id: "0", name: trivial, V: "0"}
+  - {id: s1, name: geometric, sigma: 1, vol_sign: +1, V_ref: "10.95829154224 + 3.331744231641*I"}
+  - {id: s2, name: conjugate, sigma: 2, vol_sign: -1, V_ref: "10.95829154224 - 3.331744231641*I"}
+  - {id: s3, name: complex, sigma: 3, vol_sign: +1, V_ref: "1.819805364852 + 2.213968761684*I"}
+  - {id: s4, name: complex_conjugate, sigma: 4, vol_sign: -1, V_ref: "1.819805364852 - 2.213968761684*I"}
+  - {id: s5, name: real, sigma: 5, vol_sign: 0, V_ref: "-0.8821828114504"}
+V_ref_source: "6_1/7_2 note, Table tab:72sectors (cyclotomic normalisation)"
+state_integral:
+  kind: two_dimensional
+  description: "2d Neumann-Zagier integral (6_1/7_2 note (eq:int72)); Marino 5.4 I_{K_p} at p = 3 (used here)"
+  status: conjectural
+normalisation:
+  series_reference: "NZ normalisation of the 6_1/7_2 note (A_1 closed form in z, -3z^5+z^4+5z^3-3z-1 = 0)"
+  twist_engine_offset: {value: "-1/6", meaning: "phi(I_K_p engine) = exp(c*h) * phi(NZ)", status: ours}
+blocks: {available: partial, note: "explicit q-blocks F, q~-blocks G, C_j, N_I and conjugation law in the 6_1/7_2 note sec. 7.2, 9; S+ reconstruction not implemented in this release"}

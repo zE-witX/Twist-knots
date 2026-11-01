@@ -1,0 +1,7 @@
+kind: stokes
+version: 1
+status: implemented (4_1)
+description: Stokes automorphisms S_{R->R'} as exact qt-series with Laurent coefficients
+  in xt; standard and P-frame entries; Euler exponents.
+recipes:
+- stokes_series

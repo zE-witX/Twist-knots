@@ -1,0 +1,7 @@
+kind: state_integral
+version: 1
+status: implemented
+description: 'State-integral descriptions: integrand factors (Faddeev dilogarithms
+  with linear arguments and shifts), Gaussian part, prefactor, contour notes.'
+recipes:
+- perturbative_series

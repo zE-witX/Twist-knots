@@ -1,0 +1,79 @@
+# Golden tests of the recipe stokes_series (4_1, decorated blocks, CLAUDE.md 3.5).
+schema: golden/1
+recipe: stokes_series
+cases:
+  - id: middle_I_II_symbolic
+    source: "Pengxu Phi0 note (3.9)-(3.13); CLAUDE.md 3.5(e)"
+    params: {knot: "4_1", from_cone: I, to_cone: II, order: 3, x: symbol}
+    engines: [python, sage, wolfram]
+    check: laurent_series
+    expect:
+      gg: ["1", "-(xt^2 + 2*xt + 2 + 2*xt^-1 + xt^-2)", "-(xt + 1 + xt^-1)^2", "xt^-4*(1 + xt + xt^2)^2*(1 + xt^4)"]
+      gc: ["0", "3 + 2*xt + 2*xt^-1 + xt^2 + xt^-2", "17 + 15*(xt + xt^-1) + 9*(xt^2 + xt^-2) + 4*(xt^3 + xt^-3) + xt^4 + xt^-4"]
+      0g: ["0", "-1", "-(xt + xt^-1)", "-(xt^2 + 1 + xt^-2)"]
+  - id: middle_I_II_xt2
+    source: "CLAUDE.md 3.5(e), exact values at xt = 2 (prototype_stokes_check)"
+    params: {knot: "4_1", from_cone: I, to_cone: II, order: 4, x: "2"}
+    engines: [python, sage, wolfram]
+    check: laurent_series
+    expect:
+      gg: ["1", "-45/4", "-49/4", "833/16"]
+      gc: ["0", "49/4", "2261/16", "105833/64"]
+      0g: ["0", "-1", "-5/2", "-21/4", "-113/8"]
+  - id: middle_I_II_xt1
+    source: "GGMW (50) / (127) at xt=1; CLAUDE.md 3.5(e)"
+    params: {knot: "4_1", from_cone: I, to_cone: II, order: 6, x: symbol, at_xt: 1}
+    engines: [python, sage, wolfram]
+    check: laurent_series_at1
+    expect:
+      gg: ["1", "-8", "-9", "18", "46", "90", "62"]
+      gc: ["0", "9", "75", "642", "5580", "48558", "422865"]
+      0g: ["0", "-1", "-2", "-3", "-7", "-14", "-34"]
+  - id: ggm_24_constants
+    source: "GGM (61)-(64): S+ = S_{I->II} S_{IV->I}, bottom-right block at xt=1, q^1..q^6"
+    params: {knot: "4_1", order: 6}
+    engines: [python]
+    check: ggm24
+    expect:
+      "11": ["-8", "-9", "18", "46", "90", "62"]
+      "12": ["9", "75", "642", "5580", "48558", "422865"]
+      "21": ["-9", "-75", "-642", "-5580", "-48558", "-422865"]
+      "22": ["8", "73", "638", "5571", "48538", "422819"]
+  - id: real_axis_IV_I
+    source: "GGMW (131); Pengxu (3.20) (middle normalisation)"
+    params: {knot: "4_1", from_cone: IV, to_cone: I, order: 0, x: symbol}
+    engines: [python]
+    check: constant_matrix
+    expect: [["1", "0", "1"], ["0", "1", "xt + 1 + xt^-1"], ["0", "0", "1"]]
+  - id: real_axis_II_III
+    source: "GGMW (135)"
+    params: {knot: "4_1", from_cone: II, to_cone: III, order: 0, x: symbol}
+    engines: [python]
+    check: constant_matrix
+    expect: [["1", "1", "0"], ["0", "1", "0"], ["0", "-(xt + 1 + xt^-1)", "1"]]
+  - id: pframe_axial
+    source: "Pengxu Phi0 note (eq:pos): disc P_0 = (1 - xt^-1) s P_c, disc P_g = (1 + xt^-1 + xt^-2) s P_c"
+    params: {knot: "4_1", from_cone: IV, to_cone: I, order: 0, x: symbol, frame: P}
+    engines: [python]
+    check: pframe_entries
+    expect: {"0c": "1 - xt^-1", "gc": "1 + xt^-1 + xt^-2"}
+  - id: euler_factors
+    source: "Pengxu Phi0 note (3.8)-(3.10): Omega_m(1) and SU(2) characters of S_gg"
+    params: {knot: "4_1", order: 6}
+    engines: [python]
+    check: euler
+    expect:
+      omega_at_1: [8, 37, 222, 1430, 10036, 72663]
+      characters:
+        1: {1: 1, 2: 1}
+        2: {0: 1, 1: 4, 2: 2, 3: 2}
+        3: {0: 4, 1: 13, 2: 13, 3: 8, 4: 4, 5: 2}
+  - id: lower_III_IV_ggmw130
+    source: "GGMW (130), (66): lower sweep, UDL factorisation; S^-_{0c}(qt^-1) = S^+_{0g}"
+    params: {knot: "4_1", from_cone: III, to_cone: IV, order: 4, x: symbol}
+    engines: [python]
+    check: laurent_series
+    expect:
+      0c: ["0", "-1", "-(xt + xt^-1)", "-(xt^2 + 1 + xt^-2)"]
+      0g: ["0", "1", "xt + xt^-1", "xt^2 + 1 + xt^-2"]
+      gc: ["0", "3 + 2*xt + 2*xt^-1 + xt^2 + xt^-2"]
