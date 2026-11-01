@@ -131,7 +131,7 @@ def qt_coefficients(S_entry: TSeries, order_qt: int):
         return [S_entry] + [0 * S_entry] * order_qt
     if S_entry.N < 4 * order_qt:
         raise ValueError(f"precision lost: entry known to s^{S_entry.N} < qt^{order_qt}; raise guard")
-    for k4 in range(S_entry.val, 4 * order_qt + 1):
+    for k4 in range(min(S_entry.val, 0), 4 * order_qt + 1):
         c = S_entry[k4]
         zero = c.num == 0 if isinstance(c, RatFun) else c == 0
         if k4 % 4 != 0 or k4 < 0:

@@ -9,7 +9,7 @@ Two recipes are implemented:
 
 | recipe | output |
 |---|---|
-| `perturbative_series` | the series phi_sigma(x, h), h = 2 pi i tau, of the trivial sector and of the non-trivial sectors, with the exponential kept separately, in the standard frame or the P-frame |
+| `perturbative_series` | the series phi_sigma(x, h), h = 2 pi i tau, of the trivial sector and of the non-trivial sectors, without prefactor (the exponential and one-loop data are reported separately) |
 | `stokes_series` | the Stokes automorphisms between the cones of the radial formula, as exact q~-series whose coefficients are Laurent polynomials in x~ (4_1: all four cones; 7_2: the upper sweep) |
 
 Python is the reference engine. SageMath and Wolfram Language versions of both recipes follow the same
@@ -30,10 +30,10 @@ environment variables `KDB_SAGE` and `KDB_WOLFRAMSCRIPT`. A missing engine is re
 ## Usage
 
 ```
-kdb run perturbative_series --knot 4_1 --sector g --order 12 --x 1 --frame P
+kdb run perturbative_series --knot 4_1 --sector g --order 12 --x 1
 kdb run perturbative_series --twist 3 --sector 0 --order 20 --x symbol
 kdb run perturbative_series --knot 6_1 --sector all --order 10 --x 6/5 --digits 50
-kdb run stokes_series --knot 4_1 --from-cone I --to-cone II --entry 0g --order 8 --x symbol --frame P
+kdb run stokes_series --knot 4_1 --from-cone I --to-cone II --entry 0g --order 8 --x symbol
 kdb show 4_1              # knot definition (aliases, classical data, sectors, sources)
 kdb modules               # data modules and their status
 kdb emit stokes_series --engine wolfram --params '{"order": 6, "x": "symbol"}' -o s.wl

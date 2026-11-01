@@ -261,7 +261,61 @@ def id_riley() -> List[str]:
     return errs
 
 
+def id_index_equals_splus_gg() -> List[str]:
+    """Conjecture (GGM (21), 6_1/7_2 notes C7): Ind^rot(0, x; q) = S^+_{gg}(x; q), x-graded, from the NZ data."""
+    from .recipes import run_index3d
+    from .blocks import Blocks, Ring
+    from .stokes.cones import stokes_matrix, standard_form
+    from .stokes import knot52, knot72
+    errs = []
+    N = 6
+    refs = {
+        "4_1": standard_form(stokes_matrix(Blocks(Ring.symbolic(), N), "I", "II"))["gg"],
+        "5_2": knot52.stokes_red(Ring.symbolic(), "I", "II", N)[0][0],
+    }
+    S72, _ = knot72.splus(N)
+    refs["7_2"] = S72[0][0]
+    for k, ser in refs.items():
+        idx = run_index3d({"knot": k, "order": N, "flux": [0]})["fluxes"]["0"]["Ind_rot"]
+        for n in range(N + 1):
+            c = ser[4 * n] if k == "7_2" else ser[n]
+            if not same_lp(c, idx[n]):
+                errs.append(f"{k}: q^{n}: S^+_gg = {c} but index = {idx[n]}")
+    idx61 = run_index3d({"knot": "6_1", "order": N, "flux": [0]})["fluxes"]["0"]["at_x_1"]
+    if [int(v) for v in idx61] != [1, -12, 11, 70, 42, -75, -408]:
+        errs.append(f"6_1 index at x=1 {idx61}")
+    return errs
+
+
+def same_lp(ratfun, text: str) -> bool:
+    from .golden import sym
+    import sympy as sp
+    return sp.simplify(sym(ratfun.to_str("x")) - sym(text)) == 0
+
+
+def id_index_flux_bdp() -> List[str]:
+    """5_2, flux m = 0, +-2: sum_alpha B^alpha(q^{m/2} z; q) B^alpha(q^{m/2}/z; 1/q) = z^{-3m} Ind^rot(m, z; q) (numerically)."""
+    import mpmath as mp
+    from .index3d import Index
+    from .recipes import nz_data
+    from .stokes.knot52 import numeric_blocks
+    mp.mp.dps = 25
+    q = mp.mpf(1) / 36
+    t = mp.sqrt(q)
+    X = Index(nz_data("5_2")["gluing_equations"], 16)
+    errs = []
+    for z in (mp.mpf(3) / 2, mp.mpf(2)):
+        for m in (0, 2, -2):
+            bdp = mp.fsum(a * b for a, b in zip(numeric_blocks(t ** m * z, q, "+"), numeric_blocks(t ** m / z, q, "-")))
+            nz = mp.fsum(mp.fsum(v * t ** k for k, v in X.I(m, e).items()) * z ** e for e in range(-14, 15))
+            if abs(bdp - z ** (-3 * m) * nz) > 1e-12 * abs(bdp):
+                errs.append(f"m={m} z={z}: blocks {mp.nstr(bdp, 12)} vs z^(-3m) Ind {mp.nstr(z ** (-3 * m) * nz, 12)}")
+    return errs
+
+
 IDENTITIES: Dict[str, Callable[[], List[str]]] = {
+    "3D index (flux 0) = S^+_gg": id_index_equals_splus_gg,
+    "3D index flux convention (5_2 blocks, BDP)": id_index_flux_bdp,
     "V_g (89) = S(u,v_g)+pi^2/6+pi i u": id_V_from_89_vs_S,
     "delta_g = -delta_c": id_delta_g_minus_c,
     "a_n^c = (-1)^n a_n^g (generic x)": id_conjugate_sector,

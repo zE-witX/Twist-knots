@@ -270,6 +270,8 @@ def run_stokes_series(params: Dict) -> Dict:
     knot = load_knot(params.get("knot"), params.get("twist"))
     if knot.p == 3:
         return _stokes_72(knot, params)
+    if knot.p == 2:
+        return _stokes_52(knot, params)
     if knot.p != -1:
         raise NotImplementedError(f"stokes_series is implemented for 4_1 and 7_2 only (requested {knot.id}); see REPORT")
     frm, to = params.get("from_cone", "I"), params.get("to_cone", "II")
@@ -315,7 +317,7 @@ def run_stokes_series(params: Dict) -> Dict:
             "standard_form": ("LDU: S = [[1,S0g,0],[0,1,0],[0,Scg,1]] diag(1,Sgg,Scc) [[1,0,S0c],[0,1,Sgc],[0,0,1]]" if gauss == "LDU"
                               else "UDL: S = [[1,0,S0c],[0,1,Sgc],[0,0,1]] diag(1,Sgg,Scc) [[1,S0g,0],[0,1,0],[0,Scg,1]]"),
             "frame": "Delta-normalised (GGMW (120))" if frame != "P" else "P-frame: S^P = E S E^-1, E = D Delta^-1",
-            "P_III_P_IV": "entry 1 (corrected)" if variant == "corrected" else "entry xt^-1 - 1 (GGMW (118c,d) as printed)",
+            "P_III_P_IV": "as corrected in the Phi0 note (corrections to GGMW, item 2)",
             "variables": "qt = exp(-2 pi i/tau), xt = exp(u/tau)",
         },
         "entries": out_entries,
@@ -358,4 +360,99 @@ def _stokes_72(knot, params: Dict) -> Dict:
         },
         "entries": entries, "matrix": matrix, "integral_laurent": integral if x is None else None,
         "status": "conjectural (radial formula); reconstructed (ours)", "version": __version__,
+    }
+
+
+def _stokes_52(knot, params: Dict) -> Dict:
+    """5_2: S_{I->II} (4x4 with the trivial row, GGMW (234)-(237)) and the lower sweep of the nonabelian block
+    (GGM (304c,d), (305b))."""
+    from .blocks import Ring
+    from .stokes import knot52 as K
+    frm, to = params.get("from_cone", "I"), params.get("to_cone", "II")
+    order = int(params.get("order", 4))
+    x = parse_x(params.get("x", "symbol"))
+    R = Ring.symbolic() if x is None else Ring.at(x)
+    if (frm, to) == ("I", "II"):
+        S = K.stokes_I_II(R, order)
+        labels, var = ["0", "s1", "s2", "s3"], "qt"
+    elif (frm, to) == ("III", "IV"):
+        S = K.stokes_red(R, "III", "IV", order)
+        labels, var = ["s1", "s2", "s3"], "1/qt"
+    elif (frm, to) in (("upper", "sweep"), ("S+", "S+")):
+        S = K.splus_ggm(R, order)
+        labels, var = ["s1", "s2", "s3"], "qt"
+    else:
+        raise NotImplementedError("5_2: I -> II (with trivial row) and III -> IV (nonabelian block) are available")
+    entries, matrix, integral = {}, [], True
+    n = len(labels)
+    for a in range(n):
+        row = []
+        for b in range(n):
+            cs = S[a][b].coeffs(0)[: order + 1]
+            strs = [c.to_str("xt") if isinstance(c, RatFun) else str(c) for c in cs]
+            if x is None:
+                integral &= all(c.is_integral_laurent() for c in cs if isinstance(c, RatFun))
+            entries[labels[a] + labels[b]] = {"coefficients": strs, "variable": var, "order": order}
+            row.append(strs)
+        matrix.append(row)
+    return {
+        "recipe": "stokes_series", "knot": knot.id, "group": {"family": "SL", "N": 2}, "side": "cs",
+        "params": {"from_cone": frm, "to_cone": to, "order": order, "x": "symbol" if x is None else str(x)},
+        "conventions": {
+            "definition": "S_{R->R'} = M_{R'}^{-1} M_R with M_R of GGM (304a-d); trivial row S_{0,j} = M_{I,j} - "
+                          "sum_k M_{II,k} S_{k,j}, M_R = (qt D_0, qt^2 D_1, qt^3 D_2) M^(s0)_R (GGMW (234)-(237))",
+            "normalisation": "Delta = diag(tau^(1/2)(x^(1/2)-x^(-1/2))/(xt^(1/2)-xt^(-1/2)), 1, 1, 1) (GGMW (230))",
+            "sectors": "0 trivial, s1 geometric, s2 conjugate, s3 real",
+            "variables": "qt = exp(-2 pi i/tau), xt = exp(u/tau)",
+        },
+        "entries": entries, "matrix": matrix, "integral_laurent": integral if x is None else None,
+        "status": "conjectural (GGMW Conj. 22-23, GGM Conj. 26)", "version": __version__,
+    }
+
+
+# ----------------------------------------------------------------------------------------------
+# index3d
+# ----------------------------------------------------------------------------------------------
+def nz_data(knot_id: str):
+    import yaml
+    from .data import PKG
+    d = yaml.safe_load((PKG / "knots" / "nz_data.yaml").read_text())
+    if knot_id not in d:
+        raise KeyError(f"no NZ data recorded for {knot_id}")
+    return d[knot_id]
+
+
+def run_index3d(params: Dict) -> Dict:
+    """DGG 3D index from the NZ data of the knot (status: flux 0 checked against S^+_{gg})."""
+    from .index3d import Index
+    knot = load_knot(params.get("knot"), params.get("twist"))
+    order = int(params.get("order", 6))
+    fluxes = params.get("flux", [0])
+    if isinstance(fluxes, (int, str)):
+        fluxes = [int(fluxes)]
+    nz = nz_data(knot.id)
+    X = Index(nz["gluing_equations"], order + 2)     # two guard orders: the top order is sensitive to truncation
+    out = {}
+    for m in fluxes:
+        m = int(m)
+        try:
+            rot = X.rotated_x(m)[: order + 1]
+        except ValueError as ex:
+            out[str(m)] = {"error": str(ex) + " (odd flux with half-integral lambda/2: not implemented)"}
+            continue
+        out[str(m)] = {
+            "Ind_rot": [laurent_to_str({e: Fraction(v) for e, v in d.items()}, "x") for d in rot],
+            "at_x_1": [str(sum(d.values())) for d in rot],
+            "status": ("checked: equals S^+_{gg} (4_1, 5_2, 7_2 exact; 6_1 at x = 1)" if m == 0 else
+                       "computed; flux convention checked against the block formula for 5_2 (m = +-2)"),
+        }
+    return {
+        "recipe": "index3d", "knot": knot.id, "group": {"family": "SL", "N": 2}, "side": "dual",
+        "params": {"order": order, "flux": [int(m) for m in fluxes]},
+        "conventions": {
+            "definition": "I(m,e)(q) = sum_k (-q^{1/2})^{nu.k + e nu_mu + m nu_lam/2} prod_j I_Delta(-B_j.k - e B_mu,j - m B_lam,j/2, "
+                          "A_j.k + e A_mu,j + m A_lam,j/2);  Ind^rot(m, x; q) = sum_e I(m,e) x^e",
+            "nz_data": nz["source"], "census": nz["census"],
+        },
+        "fluxes": out, "version": __version__,
     }

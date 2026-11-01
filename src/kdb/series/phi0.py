@@ -414,3 +414,79 @@ def qdiff_formal(coeffs, order: int, y0=1):
                     acc += A[j][i] * sp.Rational(j ** r, factorial(r)) * theta(f[s], r)
         f.append(sp.together(sp.cancel((rhs - acc) / lead)))
     return [sp.factor(sp.cancel(fk.subs(y, y0))) for fk in f]
+
+
+# ----------------------------------------------------------------------------------------------
+# inverted Habiro series (Marino 5.4 (ap-n), (iap-n); 6_1/7_2 notes (eq:Finv))
+# ----------------------------------------------------------------------------------------------
+def inverted_habiro_coeff(p: int, n: int, Q: int, inverse_nome: bool = False) -> Dict[int, int]:
+    """a^p_{-n-1}(q) of Marino (ap-n) as {exponent: coeff}, truncated at q^Q (p > 0);
+    for p < 0 (inverse_nome=True) the expansion of a^p_{-n-1}(q^{-1}) of (iap-n) in q, truncated at q^Q.
+
+    (ap-n):  sum_{k>=n} (-1)^n q^{n(n+1) + (p+1/2)k(k+1) - (n+k)(n+k+1)/2 - n} (q^k - q^{-k-1}) (q;q)_{n+k}/((q;q)_n (q;q)_{k-n})
+             NB: this is the printed (ap-n) multiplied by q^{n(n+1)/2}; only then are Marino's own experimental
+             values (a^{p=1}_{-n-1} = (-1)^{n-1} q^{(n+1)(n-2)/2}, a^{p=3}_{-2}) and the F_inv expansion of 7_2
+             in the 6_1/7_2 note reproduced.
+    (iap-n): a(q^{-1}) = sum_{k>=n} q^{-n(n+1)/2 - (p+1/2)k(k+1) + (k-n)(k-n+1)/2} (q^{n-k} - q^{n+k+1}) (q;q)_{n+k}/((q;q)_n (q;q)_{k-n})
+    """
+    out: Dict[int, int] = {}
+    k = n
+    while True:
+        if not inverse_nome:
+            e0 = n * (n + 1) + Fraction(2 * p + 1, 2) * k * (k + 1) - Fraction((n + k) * (n + k + 1), 2) - n
+            terms = [(e0 + k, (-1) ** n), (e0 - k - 1, -(-1) ** n)]
+        else:
+            e0 = Fraction(-n * (n + 1), 2) - Fraction(2 * p + 1, 2) * k * (k + 1) + Fraction((k - n) * (k - n + 1), 2)
+            terms = [(e0 + n - k, 1), (e0 + n + k + 1, -1)]
+        lo = min(t[0] for t in terms)
+        if lo > Q and k > n + 2:
+            break
+        ratio = laurent_dict(_qpoch(n + k), 0)
+        # divide by (q;q)_n (q;q)_{k-n}: q-binomial-like, exact division gives a polynomial
+        num = _qpoch(n + k)
+        den = _qpoch(n) * _qpoch(k - n)
+        f, r = divmod(num, den)
+        assert r == 0
+        for e, c in terms:
+            assert e.denominator == 1
+            for j, v in enumerate(f.coeffs()):
+                if v != 0 and e + j <= Q:
+                    out[int(e) + j] = out.get(int(e) + j, 0) + c * int(v)
+        k += 1
+        if k > n + 4 * Q + 40:
+            break
+    return {e: v for e, v in out.items() if v}
+
+
+def inverted_habiro_series(p: int, Q: int, nmax: int = None):
+    """F_inv-type series: (x^{1/2}-x^{-1/2})^2 C_{K_p}(q, x) = -sum_{n>=0} a_{-n-1} / prod_{j=0}^{n}(x+1/x-q^j-q^{-j})
+    expanded in q (p > 0) or in Q = 1/q (p < 0) with Laurent-polynomial coefficients in x.
+    Returns {power: {x-exponent: coeff}} truncated at power Q (Marino (park-form) with the (ap-n)/(iap-n) coefficients)."""
+    import sympy as sp
+    x, q = sp.symbols("x q")
+    nmax = nmax if nmax is not None else Q + 2
+    inv = p < 0
+    tot = 0
+    for n in range(nmax + 1):
+        a = inverted_habiro_coeff(p, n, Q + 2 * n + 4, inverse_nome=inv)
+        if not a:
+            continue
+        A = sum(c * q ** e for e, c in a.items())
+        # denominators prod_{j=0}^n (x + 1/x - q^j - q^-j); j=0 factor is (x^{1/2}-x^{-1/2})^2 (cancelled by the prefactor)
+        den = 1
+        for j in range(1, n + 1):
+            den *= (x + 1 / x - q ** j - q ** (-j)) if not inv else (x + 1 / x - q ** (-j) - q ** j)
+        tot += -A / den
+    ser = sp.series(tot, q, 0, Q + 1).removeO()
+    out = {}
+    for k in range(-5, Q + 1):
+        c = sp.expand(ser.coeff(q, k))
+        if c != 0:
+            out[k] = {int(sp.Poly(sp.expand(c * x ** 40), x).degree() - 40): 0}  # placeholder replaced below
+            d = {}
+            for term in sp.Add.make_args(c):
+                cf, mon = term.as_coeff_Mul()
+                ex = sp.degree(mon, x) if mon.has(x) and sp.degree(mon, x) > 0 else (-sp.degree(1 / mon, x) if mon.has(x) else 0)
+                d[int(ex)] = d.get(int(ex), 0) + int(cf)
+            out[k] = {e: v for e, v in d.items() if v}
+    return out

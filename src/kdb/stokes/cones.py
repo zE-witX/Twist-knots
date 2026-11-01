@@ -5,10 +5,8 @@ Conventions (rows/columns ordered 0, g, c):
     S_{R->R'} = M_{R'}^{-1} M_R                (R' reached by increasing arg tau)
 with the branch-cut rule GGMW (134) for II -> III.
 
-P_III, P_IV.  GGMW (118c,d) print the entry  xt^-1 - 1  in P_III[0][1] and P_IV[0][2]; with that
-entry (123) does *not* reproduce GGMW's own (131) and (135), nor the x -> 1 limit (41c,d), (54).
-The entry 1 (Pengxu's correction list, item 2) reproduces all of them.  ``variant='corrected'``
-(default) uses 1, ``variant='ggmw118'`` the printed entry; both are kept so the choice is explicit.
+P_III, P_IV: with the corrections to GGMW of the Phi0 note (item 2: the entry printed xt^-1 - 1 in
+(118c,d) is 1).  Check: GGMW (131), (135) and the x -> 1 limit (41c,d), (54) are reproduced.
 """
 from __future__ import annotations
 
@@ -37,7 +35,9 @@ def P_matrix(R: Ring, cone: str, variant: str = "corrected"):
     o, z, x = R.one, R.zero, R.x
     xi = o / x
     t = x + xi
-    e = o if variant == "corrected" else (xi - o)
+    if variant != "corrected":
+        raise ValueError("only the corrected P_III, P_IV (Phi0 note, corrections to GGMW) are supported")
+    e = o
     return {
         "I": [[o, z, z], [z, z, -o], [z, o, -o]],
         "II": [[o, z, z], [z, o, z], [z, o, -o]],

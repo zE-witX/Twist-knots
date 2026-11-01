@@ -1,8 +1,8 @@
 """Command line interface ``kdb``.
 
-    kdb run perturbative_series --knot 4_1 --sector g --order 12 --x 1 --frame P
+    kdb run perturbative_series --knot 4_1 --sector g --order 12 --x 1
     kdb run perturbative_series --twist 3 --sector 0 --order 20 --x symbol
-    kdb run stokes_series --knot 4_1 --from-cone I --to-cone II --entry 0g --order 8 --x symbol --frame P
+    kdb run stokes_series --knot 4_1 --from-cone I --to-cone II --entry 0g --order 8 --x symbol
     kdb show 4_1 | kdb modules | kdb check [--quick] [--engine python|sage|wolfram]
     kdb emit <recipe> --engine python|sage|wolfram --params '{"knot": "4_1", ...}' -o file
     kdb tex <bundle-dir> | kdb data build [--knot ...]
@@ -17,12 +17,14 @@ from pathlib import Path
 
 def _run(args):
     from .bundle import write_bundle
-    from .recipes import run_perturbative_series, run_stokes_series
+    from .recipes import run_perturbative_series, run_stokes_series, run_index3d
     params = {k: v for k, v in vars(args).items() if v is not None and k not in ("cmd", "recipe", "func", "no_bundle", "print")}
     if args.recipe == "perturbative_series":
         res = run_perturbative_series(params)
     elif args.recipe == "stokes_series":
         res = run_stokes_series(params)
+    elif args.recipe == "index3d":
+        res = run_index3d(params)
     else:
         sys.exit(f"unknown recipe {args.recipe}")
     if not args.no_bundle:
@@ -83,7 +85,8 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     r = sub.add_parser("run", help="run a recipe and write a result bundle")
-    r.add_argument("recipe", choices=["perturbative_series", "stokes_series"])
+    r.add_argument("recipe", choices=["perturbative_series", "stokes_series", "index3d"])
+    r.add_argument("--flux", type=int, action="append", help="index3d: magnetic flux m (repeatable)")
     r.add_argument("--knot")
     r.add_argument("--twist", type=int)
     r.add_argument("--sector")
@@ -95,7 +98,6 @@ def main(argv=None):
     r.add_argument("--from-cone", dest="from_cone", choices=["I", "II", "III", "IV"])
     r.add_argument("--to-cone", dest="to_cone", choices=["I", "II", "III", "IV"])
     r.add_argument("--entry")
-    r.add_argument("--variant", choices=["corrected", "ggmw118"])
     r.add_argument("--no-bundle", action="store_true")
     r.add_argument("--print", action="store_true", help="print the full JSON")
     r.set_defaults(func=_run)

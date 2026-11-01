@@ -286,6 +286,14 @@ class TSeries:
     def __mul__(self, o):
         if not isinstance(o, TSeries):
             return TSeries([a * o for a in self.c], self.N, self.val, self.zero)
+        # leading zero coefficients would otherwise cost precision in the bookkeeping below
+        if self.c and _iszero(self.c[0]):
+            self = self.normalize()
+        if o.c and _iszero(o.c[0]):
+            o = o.normalize()
+        if not self.c or not o.c:
+            N = min(self.N + (o.val if o.c else o.N + 1), o.N + (self.val if self.c else self.N + 1))
+            return TSeries([], N, 0, self.zero)
         v = self.val + o.val
         # precision: (a + O(t^{Na+1}))(b + O(t^{Nb+1})) known to min(Na + vb, Nb + va)
         N = min(self.N + o.val, o.N + self.val)

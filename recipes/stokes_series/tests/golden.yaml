@@ -104,3 +104,19 @@ cases:
          ["xt^2 + 2*xt + 2 + xt^-1 + 2*xt^-2 + 2*xt^-3 + xt^-4", "-xt^4 - 3*xt^3 - 5*xt^2 - 6*xt - 5 - 3*xt^-1 - xt^-2", "-2*xt - 3 - 2*xt^-1", "2*xt + 3 + 2*xt^-1", "-xt^-1"],
          ["xt^2 + 3*xt + 5 + 6*xt^-1 + 5*xt^-2 + 3*xt^-3 + xt^-4", "-xt^4 - 4*xt^3 - 10*xt^2 - 13*xt - 10 - 4*xt^-1 - xt^-2", "-xt - 2 - xt^-1", "-xt - 1 - xt^-1", "xt^-1"],
          ["xt^4 + 2*xt^3 + 2*xt^2 + xt + 1 + xt^-1 + 2*xt^-2 + 2*xt^-3 + xt^-4", "-xt^6 - 3*xt^5 - 4*xt^4 - 4*xt^3 - 3*xt^2 - 4*xt - 4 - 3*xt^-1 - xt^-2", "-xt^3 - 2*xt^2 - 2*xt - 2 - xt^-1", "xt^3 + 3*xt^2 + 4*xt + 3 + xt^-1", "-xt - 1 - xt^-1"]]
+  - id: knot52_trivial_row
+    source: "GGMW (238) (s = xt + 1 + xt^-1; the printed 's^3' in S_{0,2} is qt^3)"
+    params: {knot: "5_2", from_cone: I, to_cone: II, order: 3, x: symbol}
+    engines: [python]
+    check: laurent_series
+    expect:
+      0s1: ["-1", "1 + s + s^2", "-(-2*s - s^2 + s^3)", "-(1 + s^4)"]
+      0s2: ["1", "-(1 + 2*s + s^2)", "-s - s^2 + 2*s^3", "3*s^2 + s^3 + s^4"]
+      0s3: ["0", "-1", "1 + s^2", "3*s + s^2"]
+  - id: knot52_gg_index
+    source: "GGM (316): S^+_{11} (= zero-flux DGG index of 5_2)"
+    params: {knot: "5_2", from_cone: I, to_cone: II, order: 2, x: symbol}
+    engines: [python]
+    check: laurent_series
+    expect:
+      s1s1: ["1", "-(xt^-2 + 3*xt^-1 + 4 + 3*xt + xt^2)", "xt^-3 + xt^-2 - 1 + xt^2 + xt^3"]

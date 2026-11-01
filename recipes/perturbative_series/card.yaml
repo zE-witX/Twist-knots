@@ -5,14 +5,13 @@ axes: {group: {family: SL, N: 2}, side: cs}
 summary: >
   Perturbative series phi_sigma(x, h), h = 2 pi i tau, of a hyperbolic twist knot K_p: the trivial sector 0
   (all p) and the non-trivial sectors (4_1: g, c; other K_p: the Galois orbit s1, s2, ...), exponential kept
-  separately, standard frame or P-frame.
+  separately.  The coefficients are those of the small series phi_sigma (no prefactor).
 params:
   knot: {type: string, example: "4_1", note: "or --twist p"}
   twist: {type: integer, example: 3}
   sector: {type: string, values: ["0", g, c, s1, s2, "...", all], default: "0"}
   order: {type: integer, default: 8}
   x: {type: string, values: [symbol, rational number], default: symbol}
-  frame: {values: [standard, P], default: standard}
   digits: {type: integer, default: 60}
 engines:
   python: {status: reference, file: run.py}

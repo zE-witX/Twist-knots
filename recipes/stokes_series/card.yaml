@@ -5,7 +5,7 @@ axes: {group: {family: SL, N: 2}, side: cs}
 summary: >
   4_1: Stokes automorphism S_{R->R'} between the cones I, II, III, IV of the radial formula (decorated holomorphic
   blocks), as exact qt-series whose coefficients are Laurent polynomials in xt; entries 00, 0g, 0c, gg, gc, cg, cc
-  of the Gauss factorisation, Delta-normalised or P-frame.  7_2: the exact upper-sweep matrix S^+ reconstructed
+  of the Gauss factorisation (Delta-normalised).  7_2: the exact upper-sweep matrix S^+ reconstructed
   from the two-dimensional holomorphic blocks.
 params:
   knot: {type: string, values: ["4_1", "7_2"], note: "7_2: upper sweep S^+ only (5x5, sectors s1..s5)"}
@@ -14,8 +14,7 @@ params:
   entry: {values: [all, "00", 0g, 0c, gg, gc, cg, cc], default: all}
   order: {type: integer, default: 6}
   x: {values: [symbol, rational number], default: symbol, note: "value of xt"}
-  frame: {values: [standard, P], default: standard}
-  variant: {values: [corrected, ggmw118], default: corrected, note: "entry of P_III, P_IV, see algorithm.md"}
+  frame: {values: [standard], default: standard}
 engines:
   python: {status: reference, file: run.py}
   sage: {status: tested, file: run.sage, scope: "I -> II"}

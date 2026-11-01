@@ -30,6 +30,10 @@ def _rows(result: Dict):
         for sid, sec in result["sectors"].items():
             for n, c in enumerate(sec.get("coefficients", [])):
                 yield {"sector": sid, "power": f"h^{n}", "coefficient": c}
+    elif result["recipe"] == "index3d":
+        for m, d in result["fluxes"].items():
+            for n, c in enumerate(d["Ind_rot"]):
+                yield {"flux": m, "power": f"q^{n}", "coefficient": c}
     else:
         for e, d in result["entries"].items():
             for k, c in enumerate(d["coefficients"]):
@@ -63,7 +67,10 @@ def _tex_escape_series(coeffs, var: str, nmax: int = 4) -> str:
 def to_tex(result: Dict) -> str:
     lines = [f"% kdb {result['recipe']} for {result['knot']} -- generated, first terms only",
              f"% params: {json.dumps(result['params'])}"]
-    if result["recipe"] == "perturbative_series":
+    if result["recipe"] == "index3d":
+        for m, d in result["fluxes"].items():
+            lines.append(r"\mathrm{Ind}^{\mathrm{rot}}(" + m + r", x; q) = " + _tex_escape_series(d["Ind_rot"], "q"))
+    elif result["recipe"] == "perturbative_series":
         for sid, sec in result["sectors"].items():
             lines.append(f"% sector {sid}")
             lines.append(r"\varphi^{(" + sid + r")}(h) = " + _tex_escape_series(sec.get("coefficients", []), "h"))
@@ -79,7 +86,15 @@ def to_md(result: Dict) -> str:
     for k, v in result.get("conventions", {}).items():
         out.append(f"* **{k}**: {v}")
     out.append("")
-    if result["recipe"] == "perturbative_series":
+    if result["recipe"] == "index3d":
+        for m, d in result["fluxes"].items():
+            out.append(f"## flux m = {m} ({d['status']})")
+            out.append("| n | coefficient of q^n in Ind^rot(m, x; q) |")
+            out.append("|---|---|")
+            for n, c in enumerate(d["Ind_rot"]):
+                out.append(f"| {n} | `{c}` |")
+            out.append("")
+    elif result["recipe"] == "perturbative_series":
         for sid, sec in result["sectors"].items():
             out.append(f"## sector {sid}")
             for key in ("name", "method", "status", "normalisation"):

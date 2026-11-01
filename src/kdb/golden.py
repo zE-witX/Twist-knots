@@ -21,6 +21,7 @@ def load_golden(recipe: str) -> List[Dict]:
 def sym(expr: str, names=("x", "xt", "eps", "z", "w", "n")):
     import sympy as sp
     loc = {n: sp.symbols(n) for n in names}
+    loc["s"] = 1 + loc["xt"] + 1 / loc["xt"]      # s(xt) = xt + 1 + xt^-1 (GGMW (225))
     loc["I"] = sp.I
     loc["sqrt"] = sp.sqrt
     e = str(expr).replace("^", "**")
@@ -509,7 +510,67 @@ def c_splus_generic(case, result=None):
     return errs
 
 
+def c_nz_a1_numberfield(case, result=None):
+    from flint import acb, ctx
+    from .series.integrands import nz_series
+    P = case["params"]
+    digits = int(P["digits"])
+    res = nz_series(P["knot"], Fraction(P["x"]), 1, digits)
+    ctx.prec = int(digits * 3.4)
+    roots = _refined_roots(case["field"], digits)
+    theirs = [_eval_sym(sym(case["a1"]), r) for r in roots]
+    off = Fraction(case["offset"])
+    offa = acb(off.numerator) / off.denominator
+    errs, used = [], set()
+    if len(res) != len(theirs):
+        errs.append(f"{len(res)} critical points, expected {len(theirs)}")
+    for Z, vol, r in res:
+        devs = [(float(abs(r.a[1] - t - offa).mid()), j) for j, t in enumerate(theirs) if j not in used]
+        d, j = min(devs)
+        used.add(j)
+        if d > 1e-30:
+            errs.append(f"sector vol={vol.str(6)}: a_1 deviation {d:.2e}")
+    return errs
+
+
+def c_inverted_habiro(case, result=None):
+    from .series.phi0 import inverted_habiro_coeff
+    errs = []
+    for item in case["expect"]:
+        got = inverted_habiro_coeff(item["p"], item["n"], item["Q"], inverse_nome=item.get("inverse", False))
+        exp = {int(k): v for k, v in item["series"].items()}
+        if got != exp:
+            errs.append(f"p={item['p']} n={item['n']}: {sorted(got.items())[:8]} != {sorted(exp.items())[:8]}")
+    return errs
+
+
+def c_finv(case, result=None):
+    import sympy as sp
+    from .series.phi0 import inverted_habiro_coeff
+    x, q = sp.symbols("x q")
+    errs = []
+    for p_s, exp in case["expect"].items():
+        p = int(p_s)
+        Q = len(exp) - 2
+        tot = 0
+        for n in range(Q + 3):
+            a = inverted_habiro_coeff(p, n, Q + 3 * n + 6, inverse_nome=p < 0)
+            A = sum(c * q ** e for e, c in a.items())
+            den = 1
+            for j in range(1, n + 1):
+                den *= (x + 1 / x - q ** j - q ** (-j))
+            tot += -A / den
+        ser = sp.series(tot, q, 0, Q + 1).removeO()
+        for k, e in zip(range(-1, Q + 1), exp):
+            if sp.simplify(ser.coeff(q, k) - sym(e)) != 0:
+                errs.append(f"K_{p}: q^{k} coefficient {sp.factor(ser.coeff(q, k))} != {e}")
+    return errs
+
+
 CHECKS = {
+    "nz_a1_numberfield": c_nz_a1_numberfield,
+    "inverted_habiro": c_inverted_habiro,
+    "finv": c_finv,
     "splus_at1": c_splus_at1,
     "splus_generic": c_splus_generic,
     "rational_functions": c_rational_functions,

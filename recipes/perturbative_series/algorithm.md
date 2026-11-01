@@ -26,7 +26,6 @@ Sources are cited by short labels (GGMW = Garoufalidis-Gu-Marino-Wheeler, GGM = 
    are y-free (asserted) and reproduce GGMW (86).
 5. Fixed x: numerics at the requested precision (ball radii dropped after each step; validated against
    the 240-digit reference data and by precision repeats).
-6. P-frame: P_s = tau^{-1/2} e^{a_s/tau} gamma(x) phi_s, gamma = 1/(x^{1/2} - x^{-1/2}), a_g = -a_c.
 
 ## C. Non-trivial sectors of K_p (python engine)
 1. Integrand: Marino's double contour integral I_{K_p}(z, w) (Faddeev dilogarithms, Gaussian in w, two tanh
