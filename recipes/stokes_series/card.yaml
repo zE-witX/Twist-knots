@@ -1,0 +1,23 @@
+name: stokes_series
+version: 1
+kind: stokes
+axes: {group: {family: SL, N: 2}, side: cs}
+summary: >
+  4_1: Stokes automorphism S_{R->R'} between the cones I, II, III, IV of the radial formula (decorated holomorphic
+  blocks), as exact qt-series whose coefficients are Laurent polynomials in xt; entries 00, 0g, 0c, gg, gc, cg, cc
+  of the Gauss factorisation (Delta-normalised).  5_2: S_{I->II} with the trivial row (GGMW Conj. 22-23 with
+  the blocks of GGM), lower sweep of the nonabelian block.  7_2: the exact upper-sweep matrix S^+ reconstructed
+  from the two-dimensional holomorphic blocks.
+params:
+  knot: {type: string, values: ["4_1", "5_2", "7_2"], note: "5_2: I->II (4x4 incl. the trivial row), III->IV (nonabelian 3x3); 7_2: S^+ (5x5)"}
+  from_cone: {values: [I, II, III, IV]}
+  to_cone: {values: [I, II, III, IV], note: "adjacent counter-clockwise: I->II, II->III, III->IV, IV->I"}
+  entry: {values: [all, "00", 0g, 0c, gg, gc, cg, cc], default: all}
+  order: {type: integer, default: 6}
+  x: {values: [symbol, rational number], default: symbol, note: "value of xt"}
+  frame: {values: [standard], default: standard}
+engines:
+  python: {status: reference, file: run.py}
+  sage: {status: tested, file: run.sage, scope: "I -> II"}
+  wolfram: {status: tested, file: run.wl, scope: "I -> II"}
+status: conjectural (radial formula), exact given the conjecture

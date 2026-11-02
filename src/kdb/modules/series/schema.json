@@ -1,0 +1,81 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "series/1",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "type": "string",
+   "description": "<kind>/<version>"
+  },
+  "knot": {
+   "type": "string"
+  },
+  "group": {
+   "type": "object",
+   "properties": {
+    "family": {
+     "type": "string"
+    },
+    "N": {
+     "type": "integer"
+    }
+   }
+  },
+  "side": {
+   "enum": [
+    "cs",
+    "dual"
+   ]
+  },
+  "source": {
+   "type": "string",
+   "description": "input file and section/equation (short label)"
+  },
+  "status": {
+   "enum": [
+    "known",
+    "conjectural",
+    "ours",
+    "partial",
+    "unknown"
+   ]
+  },
+  "digits": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  },
+  "refs": {
+   "type": "array"
+  },
+  "sector": {
+   "type": "string"
+  },
+  "coefficients": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "variable": {
+   "const": "h"
+  },
+  "exponential": {
+   "type": "object"
+  },
+  "frame": {
+   "enum": [
+    "standard",
+    "P"
+   ]
+  }
+ },
+ "required": [
+  "schema",
+  "knot",
+  "group",
+  "side",
+  "status"
+ ]
+}

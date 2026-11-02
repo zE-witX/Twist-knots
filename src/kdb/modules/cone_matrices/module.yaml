@@ -1,0 +1,6 @@
+kind: cone_matrices
+version: 1
+status: implemented (4_1, 5_2)
+description: Cone matrices M_R(xt, qt) of the radial formula, R = I..IV.
+recipes:
+- stokes_series

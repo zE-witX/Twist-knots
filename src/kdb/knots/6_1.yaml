@@ -1,0 +1,28 @@
+schema: knot/1
+id: "6_1"
+twist_p: -2
+aliases: {rolfsen: "6_1", masbaum: "K_-2", schubert: [9, 5], census: "mirror of m032", riley_chirality: "b(9,7)"}
+amphichiral: false
+group: {family: SL, N: 2}
+classical:
+  alexander_t: {value: "2*t^2 - 5*t + 2", source: "Note A summary table", status: known}
+  alexander_z: {value: "1 - 2*z^2", source: "CLAUDE.md 3.0", status: known}
+  riley_x1: {value: "u^4 + u^3 + 3*u^2 + 2*u + 1", disc: 257, source: "Note A (sign/normalisation of Note A; 6_1/7_2 note quotes u^4+5u^3+7u^2+2u+1)", status: known}
+  volume: {value: "3.1639632289", digits: 11, source: "Note A summary table", status: known}
+  torsion_poly: {value: "d^4 + d^3 + 27*d^2 + 257", source: "Note A (torspolys); 6_1/7_2 note: d^4 - d^3 + 27 d^2 + 257", status: known}
+  shape_field: {value: "Q(w), w^4 + w^2 - w + 1 = 0, disc 257, (r1,r2) = (0,2)", source: "6_1/7_2 note, Prop. 61arith", status: known}
+sectors:
+  - {id: "0", name: trivial, V: "0"}
+  - {id: s1, name: geometric, sigma: 1, vol_sign: +1, V_ref: "-6.790741499248 + 3.163963228883*I"}
+  - {id: s2, name: conjugate, sigma: 2, vol_sign: -1, V_ref: "-6.790741499248 - 3.163963228883*I"}
+  - {id: s3, name: complex, sigma: 3, vol_sign: +1, V_ref: "0.2110052318553 + 1.415104897266*I"}
+  - {id: s4, name: complex_conjugate, sigma: 4, vol_sign: -1, V_ref: "0.2110052318553 - 1.415104897266*I"}
+V_ref_source: "6_1/7_2 note, Table tab:61sectors (cyclotomic normalisation, V_0 = 0)"
+state_integral:
+  kind: two_dimensional
+  description: "2d Neumann-Zagier integral (6_1/7_2 note (eq:int61)); Marino 5.4 I_{K_p} at p = -2 (used here)"
+  status: conjectural
+normalisation:
+  series_reference: "NZ normalisation of the 6_1/7_2 note (a_1 closed form in Q(w))"
+  twist_engine_offset: {value: "-1/8", meaning: "phi(I_K_p engine) = exp(c*h) * phi(NZ)", status: ours}
+blocks: {available: false, missing: "five-term factorisation needs the q~-blocks G_P of the four JK pairs (only 'convergent residue sums of session 1', not written out) and the regulator; exact S+ recorded as reference data only"}

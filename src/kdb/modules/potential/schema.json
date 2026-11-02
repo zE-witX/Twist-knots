@@ -1,0 +1,69 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "potential/1",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "type": "string",
+   "description": "<kind>/<version>"
+  },
+  "knot": {
+   "type": "string"
+  },
+  "group": {
+   "type": "object",
+   "properties": {
+    "family": {
+     "type": "string"
+    },
+    "N": {
+     "type": "integer"
+    }
+   }
+  },
+  "side": {
+   "enum": [
+    "cs",
+    "dual"
+   ]
+  },
+  "source": {
+   "type": "string",
+   "description": "input file and section/equation (short label)"
+  },
+  "status": {
+   "enum": [
+    "known",
+    "conjectural",
+    "ours",
+    "partial",
+    "unknown"
+   ]
+  },
+  "digits": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  },
+  "refs": {
+   "type": "array"
+  },
+  "potential": {
+   "type": "string"
+  },
+  "critical_equations": {
+   "type": "array"
+  },
+  "actions": {
+   "type": "object"
+  }
+ },
+ "required": [
+  "schema",
+  "knot",
+  "group",
+  "side",
+  "status"
+ ]
+}

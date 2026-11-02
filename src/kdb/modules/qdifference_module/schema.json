@@ -1,0 +1,70 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "qdifference_module/1",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "type": "string",
+   "description": "<kind>/<version>"
+  },
+  "knot": {
+   "type": "string"
+  },
+  "group": {
+   "type": "object",
+   "properties": {
+    "family": {
+     "type": "string"
+    },
+    "N": {
+     "type": "integer"
+    }
+   }
+  },
+  "side": {
+   "enum": [
+    "cs",
+    "dual"
+   ]
+  },
+  "source": {
+   "type": "string",
+   "description": "input file and section/equation (short label)"
+  },
+  "status": {
+   "enum": [
+    "known",
+    "conjectural",
+    "ours",
+    "partial",
+    "unknown"
+   ]
+  },
+  "digits": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  },
+  "refs": {
+   "type": "array"
+  },
+  "operator": {
+   "type": "array",
+   "description": "coefficients a_j(z, q, x)"
+  },
+  "order": {
+   "type": "integer"
+  },
+  "rank": {
+   "type": "integer"
+  }
+ },
+ "required": [
+  "schema",
+  "knot",
+  "group",
+  "side",
+  "status"
+ ]
+}

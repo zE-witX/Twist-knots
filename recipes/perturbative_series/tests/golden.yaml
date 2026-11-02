@@ -1,0 +1,180 @@
+# Golden tests of the recipe perturbative_series.  Every case cites its source by a short label.
+# 'engines' lists the implementations that must reproduce the case (python is the reference).
+# Cases of type private_* read Pengxu's data files in place (../inputs); they are skipped if absent.
+schema: golden/1
+recipe: perturbative_series
+cases:
+  - id: phi0_41_symbolic_ggmw92
+    source: "GGMW (92)-(93)"
+    params: {knot: "4_1", sector: "0", order: 4, x: symbol}
+    engines: [python, sage, wolfram]
+    check: rational_functions
+    expect:
+      - "-1/(x^-1 - 3 + x)"
+      - "0"
+      - "-(x^-1 - 1 + x)/(x^-1 - 3 + x)^4"
+      - "0"
+      - "-(x^-4 + 14*x^-3 + 64*x^-2 - 156*x^-1 + 201 - 156*x + 64*x^2 + 14*x^3 + x^4)/(12*(x^-1 - 3 + x)^7)"
+  - id: phi0_41_x1
+    source: "GGMW (93) at x=1; Phi0n200.dat constants"
+    params: {knot: "4_1", sector: "0", order: 6, x: "1"}
+    engines: [python, sage, wolfram]
+    check: rationals
+    expect: ["1", "0", "-1", "0", "47/12", "0", "-12361/360"]
+  - id: phi0_52_x1
+    source: "GGMW (191); Gu notes 5_2 Phi^(s0)"
+    params: {knot: "5_2", sector: "0", order: 4, x: "1"}
+    engines: [python, sage, wolfram]
+    check: rationals
+    expect: ["1", "0", "2", "6", "157/6"]
+  - id: phi0_61_x1
+    source: "6_1/7_2 note, sec. 4.6"
+    params: {knot: "6_1", sector: "0", order: 8, x: "1"}
+    engines: [python, sage, wolfram]
+    check: rationals
+    expect: ["1", "0", "-2", "2", "83/6", "-85/2", "-33151/180", "79603/60", "33849143/10080"]
+  - id: phi0_72_x1
+    source: "6_1/7_2 note, sec. 5.5"
+    params: {knot: "7_2", sector: "0", order: 7, x: "1"}
+    engines: [python, sage, wolfram]
+    check: rationals
+    expect: ["1", "0", "3", "12", "257/4", "425", "129707/40", "848669/30"]
+  - id: mmr_P_61
+    source: "6_1/7_2 note, Prop. Pm"
+    params: {knot: "6_1", sector: "0", order: 3, x: symbol}
+    engines: [python]
+    check: P_eps
+    expect: ["1", "2*eps + eps^2", "-2 - 2*eps + 25/2*eps^2 + 4*eps^3 + eps^4",
+             "2 - 77/3*eps - 223/6*eps^2 + 304/3*eps^3 + 50/3*eps^4 + 26/3*eps^5 + 5/3*eps^6"]
+  - id: mmr_P_72
+    source: "6_1/7_2 note, Prop. Pm"
+    params: {knot: "7_2", sector: "0", order: 3, x: symbol}
+    engines: [python]
+    check: P_eps
+    expect: ["1", "12*eps - 14*eps^2", "3 + 28*eps + 100*eps^2 - 184*eps^3 + 105*eps^4",
+             "12 + 266*eps + 3041/3*eps^2 + 634*eps^3 - 1908*eps^4 + 1628*eps^5 - 603*eps^6"]
+  - id: mmr_P_52
+    source: "6_1/7_2 note, calibration knots"
+    params: {knot: "5_2", sector: "0", order: 2, x: symbol}
+    engines: [python]
+    check: P_eps
+    expect: ["1", "6*eps - 5*eps^2", "2 + 10*eps + 43/2*eps^2 - 32*eps^3 + 13*eps^4"]
+  - id: gc_41_symbolic_one_two_loop
+    source: "GGMW (86); notebook oneLoop/twoLoop (porting guide phi_gc_gaussian 2.4)"
+    params: {knot: "4_1", sector: "g", order: 2, x: symbol}
+    engines: [python, sage, wolfram]
+    check: scaled_numerators
+    expect:
+      - "1"
+      - "-(x^-3 - x^-2 - 2*x^-1 + 15 - 2*x - x^2 + x^3)/24"
+      - "(x^-6 - 2*x^-5 - 3*x^-4 + 610*x^-3 - 606*x^-2 - 1210*x^-1 + 3117 - 1210*x - 606*x^2 + 610*x^3 - 3*x^4 - 2*x^5 + x^6)/1152"
+  - id: gc_41_x1_first_terms
+    source: "GGMW (86) at x=1: 3^(-1/4)(1 - 11 i/(72 sqrt3) h + ...); Phi1x1d280.dat res[1..2]"
+    params: {knot: "4_1", sector: "g", order: 2, x: "1", digits: 40}
+    engines: [python, sage, wolfram]
+    check: numeric
+    tol: 1.0e-35
+    expect: ["1", "-11*I/(72*sqrt(3))", "-697/31104"]
+  - id: private_phi_gc_series
+    source: "Phi_gc_series.dat (PhiGC/1), all x, both roots, h^0..h^60, 240 digits"
+    params: {knot: "4_1", order: 60, digits: 240}
+    engines: [python]
+    check: private_phi_gc_series
+    tol: 1.0e-200
+    # In the data file the RootMinus lists of the records x = 1, 6/5, 3/2 are identical copies of the x = 3
+    # RootMinus list (a_1 = 0.6302603191..., real).  The conjugate sector at x = 1 is checked against the exact
+    # Phi1x1d280.dat instead.  The test asserts that the anomaly is still a copy (so a corrected file is noticed).
+    known_anomalies: {"1": "RootMinus", "6/5": "RootMinus", "3/2": "RootMinus"}
+    anomaly_copy_of: "3"
+
+  - id: private_phi1x1d280
+    source: "Phi1x1d280.dat (exact Q(sqrt3) values, rescaled by (i/2)^n)"
+    params: {knot: "4_1", order: 60, digits: 240}
+    engines: [python]
+    check: private_phi1x1d280
+    tol: 1.0e-200
+  - id: private_PDzlist
+    source: "Phi0x100.dat PDzlist (first 16 entries, h^0..h^30)"
+    params: {knot: "4_1", order: 30}
+    engines: [python]
+    check: private_PDzlist
+  - id: private_hpoly2
+    source: "Phi0n200.dat hpoly2[l][n], l <= 6"
+    params: {knot: "4_1", lmax: 6}
+    engines: [python]
+    check: private_hpoly2
+  - id: twist_engine_41
+    source: "notebook Phi_gc_hbar_series vs Marino 5.4 I_{K_p} at p=-1 (log-series agree beyond h^1; offset -1/12)"
+    params: {twist: -1, order: 8, x: "6/5", digits: 60}
+    engines: [python]
+    check: twist_vs_41
+    offset: "-1/12"
+  - id: twist_engine_52
+    source: "Gu notes (eq:phis-52) = GGM convention, h^0..h^4 (offset -3/8)"
+    params: {twist: 2, order: 4, x: "1", digits: 60}
+    engines: [python]
+    check: twist_vs_52
+    offset: "-3/8"
+  - id: twist_engine_61_a1
+    source: "6_1/7_2 note sec. 4.2: a_1 = -(65-126w+33w^2-42w^3)/(12 delta^3), w^4+w^2-w+1=0 (offset -1/8)"
+    params: {twist: -2, order: 1, x: "1", digits: 50}
+    engines: [python]
+    check: twist_a1_numberfield
+    field: [1, -1, 1, 0, 1]
+    a1: "-(65 - 126*w + 33*w^2 - 42*w^3)/(12*(1 + w + 4*w^2 + w^3)^3)"
+    offset: "-1/8"
+  - id: twist_engine_72_a1
+    source: "6_1/7_2 note sec. 5.2: A_1 in z, -3z^5+z^4+5z^3-3z-1=0 (offset -1/6)"
+    params: {twist: 3, order: 1, x: "1", digits: 50}
+    engines: [python]
+    check: twist_a1_numberfield
+    field: [-1, -3, 0, 5, 1, -3]
+    a1: "-21546963/19439281*w^4 + 22450669/19439281*w^3 + 139881613/116635686*w^2 - 58318525/77757124*w - 422849603/466542744"
+    offset: "-1/6"
+  - id: twist_volumes
+    source: "Note A summary table; 6_1/7_2 note tables (Vol of each sector)"
+    params: {x: "1"}
+    engines: [python]
+    check: twist_volumes
+    expect:
+      "-1": ["2.0298832128"]
+      "2": ["2.8281220883", "0"]
+      "-2": ["3.1639632289", "1.415104897266"]
+      "3": ["3.3317442316", "2.213968761684", "0"]
+  - id: nz_integral_61_a1
+    source: "6_1/7_2 note sec. 4.2 (NZ normalisation): a_1 of all four sectors from the NZ integral (int61), offset 0"
+    params: {knot: "6_1", x: "1", digits: 50}
+    engines: [python]
+    check: nz_a1_numberfield
+    field: [1, -1, 1, 0, 1]
+    a1: "-(65 - 126*w + 33*w^2 - 42*w^3)/(12*(1 + w + 4*w^2 + w^3)^3)"
+    offset: "0"
+  - id: nz_integral_72_a1
+    source: "6_1/7_2 note sec. 5.2: A_1 of all five sectors from the NZ integral (int72), offset 0"
+    params: {knot: "7_2", x: "1", digits: 50}
+    engines: [python]
+    check: nz_a1_numberfield
+    field: [-1, -3, 0, 5, 1, -3]
+    a1: "-21546963/19439281*w^4 + 22450669/19439281*w^3 + 139881613/116635686*w^2 - 58318525/77757124*w - 422849603/466542744"
+    offset: "0"
+  - id: inverted_habiro_marino
+    source: "Marino 5.4: a^{p=3}_{-1}, a^{p=3}_{-2}, a^{p=2}_{-1}, a^{p=1}_{-n-1} = (-1)^{n-1} q^{(n+1)(n-2)/2}, a^{p=-1}_{-n-1}(1/q) = 1"
+    params: {}
+    engines: [python]
+    check: inverted_habiro
+    expect:
+      - {p: 3, n: 0, Q: 39, series: {-1: -1, 0: 1, 4: -1, 7: 1, 15: -1, 20: 1, 32: -1, 39: 1}}
+      - {p: 3, n: 1, Q: 30, series: {3: 1, 5: -1, 6: -1, 8: 1, 13: 1, 14: 1, 16: -1, 17: -1, 18: -1, 19: -1, 21: 1, 22: 1, 29: 1, 30: 1}}
+      - {p: 2, n: 0, Q: 44, series: {-1: -1, 0: 1, 2: -1, 5: 1, 9: -1, 14: 1, 20: -1, 27: 1, 35: -1, 44: 1}}
+      - {p: 2, n: 1, Q: 19, series: {1: 1, 3: -1, 4: -1, 6: 1, 7: 1, 8: 1, 10: -1, 11: -1, 12: -1, 13: -1, 15: 1, 16: 1, 17: 1, 18: 1, 19: 1}}
+      - {p: 1, n: 0, Q: 6, series: {-1: -1}}
+      - {p: 1, n: 2, Q: 6, series: {0: -1}}
+      - {p: -1, n: 3, Q: 6, inverse: true, series: {0: 1}}
+  - id: finv_72_61
+    source: "6_1/7_2 note Prop. Finv (6_1 with the session-3 correction C3: Q^6 coefficient x^3 + x^-3)"
+    params: {}
+    engines: [python]
+    check: finv
+    expect:
+      "3": ["1", "-1", "0", "0", "0", "2", "x + x^-1", "x^2 + x^-2", "x^3 - 2 + x^-3", "x^4 - x - x^-1 + x^-4", "x^5 - x^2 - x^-2 + x^-5", "x^6 - x^3 - x^-3 + x^-6", "x^7 - x^4 - x^-4 + x^-7", "x^8 - x^5 - x^-5 + x^-8"]
+      "-2": ["0", "-1", "1", "0", "0", "x + x^-1", "x^2 + x^-2", "x^3 + x^-3", "x^4 - x - x^-1 + x^-4"]

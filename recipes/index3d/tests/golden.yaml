@@ -1,0 +1,19 @@
+# Golden tests of the recipe index3d.
+schema: golden/1
+recipe: index3d
+cases:
+  - id: index_x1_notes
+    source: "6_1/7_2 note: Ind_{6_1}(0,1;q), Ind_{7_2}(0,1;q); GGM (61) / GGMW: S_gg(1) of 4_1"
+    params: {order: 6}
+    engines: [python]
+    check: index_x1
+    expect:
+      "4_1": [1, -8, -9, 18, 46, 90, 62]
+      "6_1": [1, -12, 11, 70, 42, -75, -408]
+      "7_2": [1, -12, 11, 58, 42, -35, -328]
+  - id: index_x_graded_52
+    source: "GGM (316): Ind^rot_{5_2}(0, x; q)"
+    params: {knot: "5_2", order: 2}
+    engines: [python]
+    check: index_x_graded
+    expect: ["1", "-(x^-2 + 3*x^-1 + 4 + 3*x + x^2)", "x^-3 + x^-2 - 1 + x^2 + x^3"]

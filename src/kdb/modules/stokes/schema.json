@@ -1,0 +1,69 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "stokes/1",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "type": "string",
+   "description": "<kind>/<version>"
+  },
+  "knot": {
+   "type": "string"
+  },
+  "group": {
+   "type": "object",
+   "properties": {
+    "family": {
+     "type": "string"
+    },
+    "N": {
+     "type": "integer"
+    }
+   }
+  },
+  "side": {
+   "enum": [
+    "cs",
+    "dual"
+   ]
+  },
+  "source": {
+   "type": "string",
+   "description": "input file and section/equation (short label)"
+  },
+  "status": {
+   "enum": [
+    "known",
+    "conjectural",
+    "ours",
+    "partial",
+    "unknown"
+   ]
+  },
+  "digits": {
+   "type": [
+    "integer",
+    "null"
+   ]
+  },
+  "refs": {
+   "type": "array"
+  },
+  "from_cone": {
+   "type": "string"
+  },
+  "to_cone": {
+   "type": "string"
+  },
+  "entries": {
+   "type": "object"
+  }
+ },
+ "required": [
+  "schema",
+  "knot",
+  "group",
+  "side",
+  "status"
+ ]
+}

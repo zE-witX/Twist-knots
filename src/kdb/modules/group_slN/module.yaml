@@ -1,0 +1,5 @@
+kind: group_slN
+version: 1
+status: stub
+description: SL(N) data and N-generic recipes; N is an argument of the group axis.
+recipes: []

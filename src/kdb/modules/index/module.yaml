@@ -1,0 +1,7 @@
+kind: index
+version: 1
+status: implemented
+description: DGG 3D index I(m,e)(q) and Ind^rot(m,x;q) from NZ data (dual side); flux
+  0 checked against S^+_gg.
+recipes:
+- index3d

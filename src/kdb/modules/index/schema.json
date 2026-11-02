@@ -1,0 +1,36 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "index/1",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "type": "string"
+  },
+  "knot": {
+   "type": "string"
+  },
+  "side": {
+   "const": "dual"
+  },
+  "status": {
+   "enum": [
+    "known",
+    "conjectural",
+    "ours",
+    "partial",
+    "unknown"
+   ]
+  },
+  "result": {
+   "type": "object",
+   "description": "recipe index3d output: Ind^rot(m, x; q) per flux m"
+  }
+ },
+ "required": [
+  "schema",
+  "knot",
+  "group",
+  "side",
+  "status"
+ ]
+}
